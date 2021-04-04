@@ -43,20 +43,6 @@ func AddProduce(item Item) {
 	Produce = append(Produce, item)
 }
 
-func UpdateProduce(pc string, updatedItem Item) Item {
-	empty := Item{}
-	for i, item := range Produce {
-		if item.ProduceCode == pc {
-			item.Name = updatedItem.Name
-			item.ProduceCode = updatedItem.ProduceCode
-			item.UnitPrice = updatedItem.UnitPrice
-			Produce = append(Produce[:i], item)
-			return item
-		}
-	}
-	return empty
-}
-
 func DeleteProduce(pc string) Item {
 	empty := Item{}
 	for i, item := range Produce {

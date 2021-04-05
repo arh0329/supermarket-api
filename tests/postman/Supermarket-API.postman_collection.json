@@ -1,0 +1,591 @@
+{
+	"info": {
+		"_postman_id": "b1b31ffc-f5af-47ab-9082-90be52bd857e",
+		"name": "Supermarket-API",
+		"description": "Test basic CRUD operations of supermarket-api. Run collection in order for all tests to pass.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "AddItem",
+			"item": [
+				{
+					"name": "AddItem",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Body to be correct\", function () {",
+									"    var body = pm.response.json()",
+									"    pm.expect(body.message).to.equal(\"Item(s) added\");",
+									"    pm.expect(body.added).to.exist",
+									"    pm.expect(body.errors).to.exist",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n{\n    \"name\": \"Tomato\",\n    \"produceCode\": \"{{productCode}}\",\n    \"unitPrice\": 3.46553\n}\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{service}}/produce",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddItems",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"Body to be correct\", function () {",
+									"    var body = pm.response.json()",
+									"    pm.expect(body.message).to.equal(\"Item(s) added\");",
+									"    pm.expect(body.added).to.include(\"Green Tomato\")",
+									"    pm.expect(body.added).to.include(\"Cherry Tomato\")",
+									"    pm.expect(body.errors).to.exist",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n{\n    \"name\": \"Cherry Tomato\",\n    \"produceCode\": \"{{productCode1}}\",\n    \"unitPrice\": 3.46553\n},\n{\n    \"name\": \"Green Tomato\",\n    \"produceCode\": \"{{productCode2}}\",\n    \"unitPrice\": 3.46553\n}\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{service}}/produce",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Body to be correct\", function () {",
+									"    var body = pm.response.json()",
+									"    pm.expect(body.message).to.equal(\"No items added\");",
+									"    pm.expect(body.added).to.exist",
+									"    pm.expect(body.errors[0]).to.equal(\"product Code is already in use. Product Codes must be unique\")",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n{\n    \"name\": \"Tomato\",\n    \"produceCode\": \"{{productCode}}\",\n    \"unitPrice\": 3.46553\n}\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{service}}/produce",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BadName",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Body to be correct\", function () {",
+									"    var body = pm.response.json()",
+									"    pm.expect(body.message).to.equal(\"No items added\");",
+									"    pm.expect(body.added).to.exist",
+									"    pm.expect(body.errors[0]).to.equal(\"name is invalid. Must contain only alphanumeric characters and be between 2-50 characters in length\")",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n{\n    \"name\": \"Tomato$\",\n    \"produceCode\": \"{{productCode}}\",\n    \"unitPrice\": 3.46553\n}\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{service}}/produce",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BadProductCode",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Body to be correct\", function () {",
+									"    var body = pm.response.json()",
+									"    pm.expect(body.message).to.equal(\"No items added\");",
+									"    pm.expect(body.added).to.exist",
+									"    pm.expect(body.errors[0]).to.equal(\"productCode is invalid must be only alphanumeric characters. The produce codes are sixteen characters long, with dashes separating each four character group\")",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n{\n    \"name\": \"Tomato\",\n    \"produceCode\": \"badProductCode\",\n    \"unitPrice\": 3.46553\n}\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{service}}/produce",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GetItem",
+			"item": [
+				{
+					"name": "GetAll",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body to have produce\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.be.greaterThan(3)",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{service}}/produce",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetByID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body be correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.name).exist;",
+									"    pm.expect(jsonData.produceCode).exist;",
+									"    pm.expect(jsonData.unitPrice).exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{service}}/produce/{{productCode}}",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce",
+								"{{productCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NotFound",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"pm.test(\"Body be correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.equal(\"Item not found\")",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{service}}/produce/not-a-productcode",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce",
+								"not-a-productcode"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DeleteItem",
+			"item": [
+				{
+					"name": "DeleteByID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body to be correct\", function () {",
+									"    var body = pm.response.json()",
+									"    pm.expect(body.message).to.equal(\"Item deleted\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{service}}/produce/{{productCode}}",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce",
+								"{{productCode}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NotFound",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"pm.test(\"Body to be correct\", function () {",
+									"    var body = pm.response.json()",
+									"    pm.expect(body.message).to.equal(\"Item not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{service}}/produce/not-a-productcode",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce",
+								"not-a-productcode"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CleanUp",
+			"item": [
+				{
+					"name": "DeleteProduct1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body to be correct\", function () {",
+									"    var body = pm.response.json()",
+									"    pm.expect(body.message).to.equal(\"Item deleted\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{service}}/produce/{{productCode1}}",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce",
+								"{{productCode1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteProduct2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body to be correct\", function () {",
+									"    var body = pm.response.json()",
+									"    pm.expect(body.message).to.equal(\"Item deleted\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{service}}/produce/{{productCode2}}",
+							"protocol": "http",
+							"host": [
+								"{{service}}"
+							],
+							"path": [
+								"produce",
+								"{{productCode2}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "HealthCheck",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body to be correct\", function () {",
+							"    var body = pm.response.json()",
+							"    pm.expect(body.message).to.equal(\"ok\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{service}}/health",
+					"protocol": "http",
+					"host": [
+						"{{service}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "4bc4f81d-be5a-4b69-ae19-4a95de88e1eb",
+			"key": "productCode",
+			"value": "A12T-4GH7-QPL9-3N4B"
+		},
+		{
+			"id": "df14dfe2-f2f2-4335-8435-a2d7655cb442",
+			"key": "productCode2",
+			"value": "A12T-4GH7-QPL9-3N42"
+		},
+		{
+			"id": "961dbf3f-7b63-45cb-92f1-ee572fc6be40",
+			"key": "productCode1",
+			"value": "A12T-4GH7-QPL9-3N41"
+		},
+		{
+			"id": "21a75baa-9cee-4d93-b847-1ae4fcff1355",
+			"key": "service",
+			"value": "supermarket-api:8000"
+		}
+	]
+}

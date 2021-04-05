@@ -1,6 +1,10 @@
 package models
 
+import "errors"
+
 type allItems []Item
+
+var errDuplicate = errors.New("product Code is already in use. Product Codes must be unique")
 
 var Produce = allItems{
 	{
@@ -39,8 +43,13 @@ func GetOneItem(pc string) Item {
 	return empty
 }
 
-func AddProduce(item Item) {
-	Produce = append(Produce, item)
+func AddProduce(item Item) error {
+	if !isDuplicate(item) {
+		Produce = append(Produce, item)
+	} else {
+		return errDuplicate
+	}
+	return nil
 }
 
 func DeleteProduce(pc string) Item {
@@ -64,4 +73,14 @@ func Equal(a, b []Item) bool {
 		}
 	}
 	return true
+}
+
+func isDuplicate(newItem Item) bool {
+
+	for _, item := range Produce {
+		if item.ProduceCode == newItem.ProduceCode {
+			return true
+		}
+	}
+	return false
 }

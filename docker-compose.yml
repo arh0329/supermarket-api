@@ -1,0 +1,16 @@
+version: "2"
+services:
+  supermarket-api:
+    build:
+        context: "./"
+        dockerfile: "Dockerfile"
+    image: supermarket-api
+    ports:
+        - 8000:8000
+  postman_checks:
+      container_name: newman
+      image: postman/newman:latest
+      entrypoint: "newman run ./Supermarket-API.postman_collection.json"
+      volumes:
+        - ./tests/postman:/tests
+      working_dir: /tests

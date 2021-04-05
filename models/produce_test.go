@@ -24,7 +24,7 @@ func Test_Validate_BadName(t *testing.T) {
 	}
 	err := item.Validate()
 	assert.NotNil(t, err)
-	assert.Equal(t, "Key: 'Item.Name' Error:Field validation for 'Name' failed on the 'alphanum' tag", err.Error())
+	assert.Equal(t, "name is invalid. Must contain only alphanumeric characters and be between 2-50 characters in length", err.Error())
 }
 
 func Test_Validate_BadProductCode(t *testing.T) {

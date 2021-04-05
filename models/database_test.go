@@ -132,6 +132,14 @@ func Test_AddProduce_AddsItemToDatabase(t *testing.T) {
 	assert.Equal(t, produceWithPumpkin, Produce)
 }
 
+func Test_AddProduce_ReturnsDuplicateErr(t *testing.T) {
+	resetDatabase()
+	_ = AddProduce(pumpkin)
+	err := AddProduce(pumpkin)
+	assert.Equal(t, errDuplicate, err)
+	assert.Equal(t, produceWithPumpkin, Produce)
+}
+
 func Test_DeleteProduce_DeletesItem(t *testing.T) {
 	resetDatabase()
 	_ = DeleteProduce("A12T-4GH7-QPL9-3N4M")
@@ -163,4 +171,14 @@ func Test_Equal_ReturnsTrue_IfArraysEqual(t *testing.T) {
 	array2 := produceStart
 	res := Equal(array1, array2)
 	assert.True(t, res)
+}
+
+func Test_isDuplicate_ReturnsTrue_IfDuplicate(t *testing.T) {
+	res := isDuplicate(Produce[0])
+	assert.True(t, res)
+}
+
+func Test_isDuplicate_ReturnsFalse_IfNotDuplicate(t *testing.T) {
+	res := isDuplicate(pumpkin)
+	assert.False(t, res)
 }

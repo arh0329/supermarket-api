@@ -44,9 +44,12 @@ func addProduce(c *gin.Context) {
 				errChan <- err
 			} else {
 				mutex.Lock()
-				models.AddProduce(it)
+				if err := models.AddProduce(it); err != nil {
+					errChan <- err
+				} else {
+					itemChan <- it.Name
+				}
 				mutex.Unlock()
-				itemChan <- it.Name
 			}
 			wg.Done()
 		}(item)

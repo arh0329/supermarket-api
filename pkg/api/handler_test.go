@@ -46,7 +46,7 @@ func Test_addProduce_Success(t *testing.T) {
 	newItem := []models.Item{
 		{
 			Name:        "pear",
-			ProduceCode: "E5T6-9UI3-TH15-QR88",
+			ProduceCode: "E5T6-9UI3-TH15-QR89",
 			UnitPrice:   2.99,
 		},
 	}
@@ -60,6 +60,27 @@ func Test_addProduce_Success(t *testing.T) {
 	body, _ := ioutil.ReadAll(w.Body)
 
 	assert.Equal(t, `{"added":["pear"],"errors":[],"message":"Item(s) added"}`, string(body))
+}
+
+func Test_addProduce_DuplicateError(t *testing.T) {
+	w := httptest.NewRecorder()
+	newItem := []models.Item{
+		{
+			Name:        "pear",
+			ProduceCode: "E5T6-9UI3-TH15-QR88",
+			UnitPrice:   2.99,
+		},
+	}
+	marshaled, _ := json.Marshal(newItem)
+
+	req, _ := http.NewRequest("POST", "/produce", bytes.NewBuffer(marshaled))
+	r := CreateRouter()
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, 400, w.Code)
+	body, _ := ioutil.ReadAll(w.Body)
+
+	assert.Equal(t, `{"added":[],"errors":["product Code is already in use. Product Codes must be unique"],"message":"No items added"}`, string(body))
 }
 
 func Test_addProduce_BadRequest(t *testing.T) {
@@ -93,7 +114,7 @@ func Test_addProduce_InvalidItem(t *testing.T) {
 	assert.Equal(t, 400, w.Code)
 	body, _ := ioutil.ReadAll(w.Body)
 
-	assert.Equal(t, `{"added":[],"errors":["Key: 'Item.Name' Error:Field validation for 'Name' failed on the 'alphanum' tag"],"message":"No items added"}`, string(body))
+	assert.Equal(t, `{"added":[],"errors":["name is invalid. Must contain only alphanumeric characters and be between 2-50 characters in length"],"message":"No items added"}`, string(body))
 }
 
 // getOneItem

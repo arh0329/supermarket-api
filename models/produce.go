@@ -5,7 +5,6 @@ import (
 	"math"
 	"regexp"
 
-	logger "github.com/arh0329/supermarket-api/pkg/logging"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -31,7 +30,6 @@ func (i *Item) Validate() (err error) {
 		return err
 	}
 
-	logger.Log().Info(i.ProduceCode)
 	if i.ProduceCode != "" {
 		if valid, _ := regexp.Match(`^([a-zA-Z0-9]{4}-){3}[a-zA-Z0-9]{4}$`, []byte(i.ProduceCode)); !valid {
 			return errInvalidProductCode

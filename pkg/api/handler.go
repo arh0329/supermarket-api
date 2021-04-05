@@ -2,33 +2,83 @@ package api
 
 import (
 	"net/http"
+	"sync"
 
 	"github.com/arh0329/supermarket-api/models"
+	logger "github.com/arh0329/supermarket-api/pkg/logging"
 	"github.com/gin-gonic/gin"
 )
 
 var empty = models.Item{}
 
+type response struct {
+	Message string `json:"message"`
+}
+
 func getAllProduce(c *gin.Context) {
 	produce := models.GetAllProduce()
-	c.JSON(http.StatusOK, gin.H{"produce": produce})
+	c.JSON(http.StatusOK, produce)
 }
 
 func addProduce(c *gin.Context) {
 	var items []models.Item
 	if err := c.ShouldBindJSON(&items); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		logger.Log().WithError(err).Error("Error occurred getting request body")
+		c.JSON(http.StatusBadRequest, response{Message: err.Error()})
 		return
 	}
+	chanErrs := []string{}
+	chanItems := []string{}
+
+	var mutex = &sync.Mutex{}
+
+	var wg sync.WaitGroup
+	wg.Add(len(items))
+	errChan := make(chan error, len(items))
+	itemChan := make(chan string, len(items))
 	for _, item := range items {
-		if err := item.Validate(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
+
+		go func(it models.Item) {
+			if err := it.Validate(); err != nil {
+				logger.Log().WithError(err).Error("Error validating item")
+				errChan <- err
+			} else {
+				mutex.Lock()
+				models.AddProduce(it)
+				mutex.Unlock()
+				itemChan <- it.Name
+			}
+			wg.Done()
+		}(item)
+	}
+	wg.Wait()
+	close(errChan)
+	close(itemChan)
+
+	if len(errChan) != 0 {
+		for err := range errChan {
+			if err != nil {
+				chanErrs = append(chanErrs, err.Error())
+			}
 		}
-		models.AddProduce(item)
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Item(s) added"})
+	if len(itemChan) != 0 {
+		for item := range itemChan {
+			chanItems = append(chanItems, item)
+		}
+	}
+
+	if len(chanItems) == 0 {
+		resp := gin.H{"message": "No items added", "added": chanItems, "errors": chanErrs}
+		logger.Log().Info(resp)
+		c.JSON(http.StatusBadRequest, resp)
+	} else {
+		resp := gin.H{"message": "Item(s) added", "added": chanItems, "errors": chanErrs}
+		logger.Log().Info(resp)
+		c.JSON(http.StatusCreated, resp)
+	}
+
 }
 
 func getOneItem(c *gin.Context) {
@@ -38,7 +88,8 @@ func getOneItem(c *gin.Context) {
 	if item != empty {
 		c.JSON(http.StatusOK, item)
 	} else {
-		c.JSON(http.StatusNotFound, gin.H{"message": "item not found"})
+		logger.Log().WithField("productCode", pc).Info("item not found")
+		c.JSON(http.StatusNotFound, response{Message: "Item not found"})
 	}
 }
 
@@ -46,8 +97,10 @@ func deleteItem(c *gin.Context) {
 	pc := c.Param("pc")
 	item := models.DeleteProduce(pc)
 	if item != empty {
-		c.JSON(http.StatusOK, gin.H{"message": "item deleted"})
+		logger.Log().WithField("item", item).Info("item deleted")
+		c.JSON(http.StatusOK, response{Message: "Item deleted"})
 	} else {
-		c.JSON(http.StatusNotFound, gin.H{"message": "item not found"})
+		logger.Log().WithField("productCode", pc).Info("item not found")
+		c.JSON(http.StatusNotFound, response{Message: "Item not found"})
 	}
 }

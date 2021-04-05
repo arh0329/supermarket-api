@@ -43,6 +43,6 @@ func logMiddleware() gin.HandlerFunc {
 			"latencyTime": fmt.Sprintf("%13v", latencyTime),
 			"reqMethod":   reqMethod,
 			"reqURI":      reqUri,
-		}).Info()
+		}).Info("Call Info")
 	}
 }

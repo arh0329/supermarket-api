@@ -3,7 +3,7 @@ FROM golang:alpine as builder
 WORKDIR /go/src/supermarket-api
 RUN apk add --update git
 COPY . .
-RUN apk add --no-cache git pkgconfig build-base bash cyrus-sasl-dev openssl-dev; \
+RUN apk add --no-cache git bash; \
   go get -d -v ./; \
   go install -v; \
   go build -o app -tags musl  ./;

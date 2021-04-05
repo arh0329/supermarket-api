@@ -2,6 +2,15 @@
 [![ci](https://github.com/arh0329/supermarket-api/actions/workflows/main.yml/badge.svg)](https://github.com/arh0329/supermarket-api/actions/workflows/main.yml)
 [![codecov](https://codecov.io/gh/arh0329/supermarket-api/branch/main/graph/badge.svg)](https://codecov.io/gh/arh0329/supermarket-api)
 
+Contents
+* [Routes](#routes)
+  + [GetAll](#getall)
+  + [GetByProductCode](#getbyproductcode)
+  + [AddProduce](#addproduce)
+  + [DeleteProduce](#deleteproduce)
+* [Build and Run](#build-and-run)
+* [Postman Tests](#postman-tests)
+
 Basic CRUD API in golang
 
 - The produce database is only a single, in memory array of data and supports the following operations: add, delete, and fetch

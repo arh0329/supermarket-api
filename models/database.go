@@ -6,6 +6,7 @@ type allItems []Item
 
 var errDuplicate = errors.New("product Code is already in use. Product Codes must be unique")
 
+// Produce is the in memory database.
 var Produce = allItems{
 	{
 		Name:        "Lettuce",
@@ -29,10 +30,14 @@ var Produce = allItems{
 	},
 }
 
+// GetAllProduce retrieves all items from database. Returns an array of Items
 func GetAllProduce() []Item {
 	return Produce
 }
 
+// GetOneItem retrieves one item from the database. Accepts
+// the product code of the item to be retrieved. Returns item if found.
+// Returns empty item if not found
 func GetOneItem(pc string) Item {
 	empty := Item{}
 	for _, item := range Produce {
@@ -43,6 +48,8 @@ func GetOneItem(pc string) Item {
 	return empty
 }
 
+// AddProduce adds item to database. Accepts item to be added.
+// Returns error if item product code is already present in database
 func AddProduce(item Item) error {
 	if !isDuplicate(item) {
 		Produce = append(Produce, item)
@@ -52,6 +59,8 @@ func AddProduce(item Item) error {
 	return nil
 }
 
+// DeleteProduce deletes an item from the database. Accepts the product code
+// of the item to be deleted. Returns deleted item. Returns empty item if not found
 func DeleteProduce(pc string) Item {
 	empty := Item{}
 	for i, item := range Produce {
@@ -63,6 +72,7 @@ func DeleteProduce(pc string) Item {
 	return empty
 }
 
+// Equal checks if two arrays of Items are equal
 func Equal(a, b []Item) bool {
 	if len(a) != len(b) {
 		return false
@@ -75,6 +85,7 @@ func Equal(a, b []Item) bool {
 	return true
 }
 
+// isDuplicate checks if item is a already in the database
 func isDuplicate(newItem Item) bool {
 
 	for _, item := range Produce {

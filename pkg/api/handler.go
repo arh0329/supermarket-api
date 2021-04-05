@@ -15,11 +15,13 @@ type response struct {
 	Message string `json:"message"`
 }
 
+// getAllProduce handler for retrieving produce from database
 func getAllProduce(c *gin.Context) {
 	produce := models.GetAllProduce()
 	c.JSON(http.StatusOK, produce)
 }
 
+// addProduce handler for adding items to database.
 func addProduce(c *gin.Context) {
 	var items []models.Item
 	if err := c.ShouldBindJSON(&items); err != nil {
@@ -84,6 +86,7 @@ func addProduce(c *gin.Context) {
 
 }
 
+// getOneItem handler for retreiving item by product code.
 func getOneItem(c *gin.Context) {
 	pc := c.Param("pc")
 
@@ -96,6 +99,7 @@ func getOneItem(c *gin.Context) {
 	}
 }
 
+// deleteItem handler for deleting item by product code
 func deleteItem(c *gin.Context) {
 	pc := c.Param("pc")
 	item := models.DeleteProduce(pc)

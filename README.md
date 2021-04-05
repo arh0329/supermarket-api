@@ -1,5 +1,4 @@
 # SuperMarket API
-[![Go](https://github.com/arh0329/supermarket-api/actions/workflows/go.yml/badge.svg)](https://github.com/arh0329/supermarket-api/actions/workflows/go.yml)
 [![ci](https://github.com/arh0329/supermarket-api/actions/workflows/main.yml/badge.svg)](https://github.com/arh0329/supermarket-api/actions/workflows/main.yml)
 [![codecov](https://codecov.io/gh/arh0329/supermarket-api/branch/main/graph/badge.svg)](https://codecov.io/gh/arh0329/supermarket-api)
 
@@ -13,6 +12,7 @@ Basic CRUD API in golang
 - The produce codes are alphanumeric and case insensitive
 - The produce codes must be unique
 - The produce unit price is a number with up to 2 decimal places
+- Unit price is rounded off to 2 decimals if more are present
 
 ## Routes
 
@@ -69,11 +69,11 @@ Example:
 
 ### AddProduce
 
-Add one or more new produce items to the database. Accepts JSON array input with the below parameters:
+Add one or more new produce items to the database. Accepts an array of items. Items are JSON and must include the following fields:
 
-- Name - required
-- Produce Code - required
-- Unit Price - required
+- Name - required and must only include alphanumeric(with spaces) characters
+- Produce Code - required and must only include alphanumeric characters. Produce codes are sixteen characters long, with dashes separating each four character group
+- Unit Price - required and must be numerical
 
 Example:
 - Call: POST - http://localhost:8000/produce

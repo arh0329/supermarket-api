@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// CreateRouter creates gin engine for running http server
 func CreateRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(logMiddleware())
@@ -26,6 +27,7 @@ func CreateRouter() *gin.Engine {
 	return r
 }
 
+// logMiddleware is a middleware handler that logs request information
 func logMiddleware() gin.HandlerFunc {
 	logger := logrus.New()
 	logger.Formatter = &logrus.JSONFormatter{}
